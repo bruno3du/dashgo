@@ -14,11 +14,12 @@ export default function ActiveLink({ children, ...rest }: ActiveLinkProps) {
 	let isActive = false;
 
 	if (asPath == rest.href || asPath == rest.as) {
-    isActive = true
-  }
-		return (
-			<Link {...rest}>
-				{cloneElement(children, { color: isActive ? 'pink.400' : 'gray.50' })}
-			</Link>
-		);
+		isActive = true;
+	}
+	
+	return (
+		<Link {...rest}>
+			{cloneElement(children, { color: isActive ? 'pink.400' : 'gray.50' })}
+		</Link>
+	);
 }
