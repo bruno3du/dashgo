@@ -11,6 +11,7 @@ import { ReactQueryDevtools } from 'react-query/devtools';
 import { hotjar } from 'react-hotjar';
 import { useEffect } from 'react';
 import { useRouter } from 'next/router';
+import Script from 'next/script';
 
 if (process.env.NODE_ENV === 'development') {
 	makeServer();
@@ -19,7 +20,7 @@ if (process.env.NODE_ENV === 'development') {
 const queryClient = new QueryClient();
 
 function MyApp({ Component, pageProps }: AppProps) {
-	const router = useRouter()
+	const router = useRouter();
 
 	const HJID = 2894769;
 	const HJSV = 6;
@@ -27,24 +28,31 @@ function MyApp({ Component, pageProps }: AppProps) {
 		hotjar.initialize(HJID, HJSV);
 	}, []);
 
-	useEffect(() => {
-		const handleRouteChange = (url) => {
-			gtag.pageview(url);
-		};
-		router.events.on('routeChangeComplete', handleRouteChange);
-		return () => {
-			router.events.off('routeChangeComplete', handleRouteChange);
-		};
-	}, [router.events]);
 	return (
-		<QueryClientProvider client={queryClient}>
-			<ReactQueryDevtools />
-			<ChakraProvider theme={theme}>
-				<SidebarDrawerProvider>
-					<Component {...pageProps} />
-				</SidebarDrawerProvider>
-			</ChakraProvider>
-		</QueryClientProvider>
+		<>
+			<Script
+				strategy='lazyOnload'
+				src='https://www.googletagmanager.com/gtag/js?id=G-HFMS50QZ2H'
+			/>
+			<Script strategy='lazyOnload'>
+				{`
+		  window.dataLayer = window.dataLayer || [];
+			function gtag(){dataLayer.push(arguments);}
+			gtag('js', new Date());
+		
+			gtag('config', 'G-HFMS50QZ2H');
+					`}
+			</Script>
+
+			<QueryClientProvider client={queryClient}>
+				<ReactQueryDevtools />
+				<ChakraProvider theme={theme}>
+					<SidebarDrawerProvider>
+						<Component {...pageProps} />
+					</SidebarDrawerProvider>
+				</ChakraProvider>
+			</QueryClientProvider>
+		</>
 	);
 }
 
