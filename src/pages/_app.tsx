@@ -8,6 +8,8 @@ import SidebarDrawerProvider from '../context/SidebarDrawerContext';
 import { makeServer } from '../services/mirage';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
+import { hotjar } from 'react-hotjar';
+import { useEffect } from 'react';
 
 if (process.env.NODE_ENV === 'development') {
 	makeServer();
@@ -16,6 +18,11 @@ if (process.env.NODE_ENV === 'development') {
 const queryClient = new QueryClient();
 
 function MyApp({ Component, pageProps }: AppProps) {
+	const HJID = 2894769
+	const HJSV = 6
+	useEffect(() => {
+		hotjar.initialize(HJID, HJSV);
+	}, []);
 	return (
 		<QueryClientProvider client={queryClient}>
 			<ReactQueryDevtools />
